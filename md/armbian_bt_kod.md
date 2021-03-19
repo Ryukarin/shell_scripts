@@ -88,7 +88,7 @@ ln -s /usr/local/openssl111/lib/libcrypto.so.1.1 /usr/lib/aarch64-linux-gnu/libc
 ![进入可道云](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210318_011.png "在这里输入图片标题")
 
 
-3. 挂载磁盘
+3. 挂载外接磁盘
 
 默认的可道云存储在`/www/wwwroot/数据库名/`目录下（也就是可道云网盘的根目录，之前设置的/www/wwwroot/kodbox/）。但是，我用的是斐讯N1、玩客云这样的小主机，存储也就只有8GB容量，系统和环境已经占了一大部分了，要是当网盘存储，那肯定是不行的。所以，需要外接一块硬盘挂载，当作云盘的存储。具体配置如下：
 
@@ -172,7 +172,7 @@ root@aml:/www/wwwroot/kodbox# chown -hR www ./NAS/
 root@aml:/www/wwwroot/kodbox# chgrp -hR www ./NAS/
 ```
 
-- 开机自动挂载硬盘
+- 设置开机自动挂载硬盘
 
 输入命令`blkid /dev/sda`，查看硬盘的信息UUID和TYPE    
 再输入命令`nano /etc/fstab`，编辑/etc/fstab文件，最后一行加入如下信息：    
@@ -195,7 +195,7 @@ LABEL=BOOT_EMMC /boot           vfat            defaults                        
 UUID=d03d4044-b17f-42a0-8dd8-8071aa2ccc6a       /www/wwwroot/kodbox/NAS ext4    defaults        0 0
 ```
 
-- web界面挂载
+4. web界面设置
 
 - 进入可道云web界面,点击左下角的图标弹出设置菜单,选择**后台管理**
 - 新界面点击**存储文件--->存储管理**
