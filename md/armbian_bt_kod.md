@@ -43,7 +43,7 @@ web登陆上面提供的内网面板地址，输入用户名、密码进行登�
 
 ![查看Apache状态](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210318_006.png "在这里输入图片标题")
 
-*所以执行以下命令把opnessl替换即可解决*
+*所以执行以下命令把opnessl替换即可解决，参考http://www.apod.cc/index.php/post/197.html*
 ```
 mv /usr/bin/openssl /usr/bin/openssl—old
 ln -s /usr/local/openssl111/bin/openssl  /usr/bin/openssl
@@ -90,13 +90,13 @@ ln -s /usr/local/openssl111/lib/libcrypto.so.1.1 /usr/lib/aarch64-linux-gnu/libc
 
 3. 挂载磁盘
 
-默认的可道云存储在`/www/wwwroot/数据库名/`目录下（也就是可道云网盘的根目录，之前设置的/www/wwwroot/kodbox/）    
-但是，我用的是斐讯N1、玩客云这样的小主机，存储也就只有8GB容量，系统和环境已经占了 一大部分了，要是当网盘存储，那肯定是不行的。    
-所以，需要外接一块硬盘挂载，当作云盘的存储。具体配置如下：
+默认的可道云存储在`/www/wwwroot/数据库名/`目录下（也就是可道云网盘的根目录，之前设置的/www/wwwroot/kodbox/）。但是，我用的是斐讯N1、玩客云这样的小主机，存储也就只有8GB容量，系统和环境已经占了一大部分了，要是当网盘存储，那肯定是不行的。所以，需要外接一块硬盘挂载，当作云盘的存储。具体配置如下：
 
 - 把硬盘接入主机
 
-- 用putty远程连接登陆到主机
+- 用putty远程连接登陆到主机armbian（root帐号，root密码）
+
+![putty链接主机](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210319_001.png "在这里输入图片标题")
 
 - 查看硬盘
 
@@ -140,7 +140,7 @@ Writing superblocks and filesystem accounting information: done
 
 输入命令`cd /www/wwwroor/数据库名/`（我设置的数据库位置`cd /www/wwwroor/kodbox/`），进入可道云的根目录下    
 继续输入命令`ls`，查看目录内容，data目录为可道云数据库默认存储数据的位置    
-再输入命令`mkdir NAS`，新建一个目录，用于挂载硬盘（目录名随意，此处目录为NAS）
+再输入命令`mkdir NAS`，新建一个目录，用于挂载硬盘（目录名随意，此处目录为NAS）  
 
 ```
 root@aml:~# cd /www/wwwroot/kodbox/
