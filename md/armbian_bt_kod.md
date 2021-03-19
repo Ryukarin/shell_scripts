@@ -1,6 +1,7 @@
 # Armbian搭建可道云kodbox
 
 ## 安装armbian
+
 安装Armbian可参考恩山大佬的帖子    
 https://www.right.com.cn/forum/thread-510423-1-1.html
 
@@ -93,9 +94,11 @@ ln -s /usr/local/openssl111/lib/libcrypto.so.1.1 /usr/lib/aarch64-linux-gnu/libc
 但是，我用的是斐讯N1、玩客云这样的小主机，存储也就只有8GB容量，系统和环境已经占了 一大部分了，要是当网盘存储，那肯定是不行的。    
 所以，需要外接一块硬盘挂载，当作云盘的存储。具体配置如下：
 
-- 把硬盘接入主机，putty连接登陆到主机
+- 把硬盘接入主机
 
-- 找到硬盘
+- 用putty远程连接登陆到主机
+
+- 查看硬盘
 
 输入命令`lsblk`，找到要挂载的硬盘
 
@@ -111,11 +114,11 @@ mmcblk1boot1 179:64   0     4M  1 disk
 zram0        253:0    0    50M  0 disk /var/log
 zram1        253:1    0 919.2M  0 disk [SWAP]
 ```
-**sda就是需要挂载的磁盘29.3GB（32GB的U盘）**
+*sda就是需要挂载的磁盘29.3GB（32GB的U盘）*
 
 - 格式化磁盘
 
-输入命令`mkfs.ext4 /dev/sda`，把硬盘格式化成ext4格式
+输入命令`mkfs.ext4 /dev/sda`，把硬盘sda格式化成ext4格式
 
 ```
 root@aml:~# mkfs.ext4 /dev/sda
@@ -137,7 +140,7 @@ Writing superblocks and filesystem accounting information: done
 
 输入命令`cd /www/wwwroor/数据库名/`（我设置的数据库位置`cd /www/wwwroor/kodbox/`），进入可道云的根目录下    
 继续输入命令`ls`，查看目录内容，data目录为可道云数据库默认存储数据的位置    
-在输入命令`mkdir NAS`，新建一个目录，用于挂载硬盘（目录名随意，此处目录为NAS）
+再输入命令`mkdir NAS`，新建一个目录，用于挂载硬盘（目录名随意，此处目录为NAS）
 
 ```
 root@aml:~# cd /www/wwwroot/kodbox/
@@ -149,9 +152,9 @@ root@aml:/www/wwwroot/kodbox# mkdir NAS
 - 挂载磁盘
 
 输入命令`mount /dev/sda NAS/`，挂载磁盘sda到/www/wwwroot/数据库名/NAS/下（此处为/www/wwwroot/kodbox/NAS/）    
-输入命令`lsblk`，查看硬盘挂载是否成功，sda的MOUNTPOINT挂载点是否成功
-更改NAS目录的的所属用户为www    
-更改NAS目录的的所属组为www    
+输入命令`lsblk`，查看硬盘挂载是否成功，sda的MOUNTPOINT挂载点是否显示/www/wwwroot/kodbox/NAS/
+输入命令`chown -hR www NAS/`，更改NAS目录的的所属用户为www    
+输入命令`chgrp -hR www NAS/`，更改NAS目录的的所属组为www    
 
 ```
 root@aml:/www/wwwroot/kodbox# mount /dev/sda ./NAS/
@@ -172,10 +175,10 @@ root@aml:/www/wwwroot/kodbox# chgrp -hR www ./NAS/
 - 开机自动挂载硬盘
 
 输入命令`blkid /dev/sda`，查看硬盘的信息UUID和TYPE    
-在输入命令`nano /etc/fstab`，编辑/etc/fstab文件，最后一行加入如下信息：    
+再输入命令`nano /etc/fstab`，编辑/etc/fstab文件，最后一行加入如下信息：    
 >UUID=d03d4044-b17f-42a0-8dd8-8071aa2ccc6a       /www/wwwroot/kodbox/NAS ext4    defaults        0 0
 Ctrl+O写入文件；Ctrl+O退出文件    
-以后当主机断电重启时，这块硬盘就在启动时自动挂载到/www/wwwroot/kodbox/NAS
+以后当主机断电重启时，这块硬盘就在启动时自动挂载到/www/wwwroot/kodbox/NAS目录下
 
 ```
 root@aml:/www/wwwroot/kodbox# blkid /dev/sda
