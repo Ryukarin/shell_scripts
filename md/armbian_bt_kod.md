@@ -26,22 +26,23 @@ web登陆上面提供的内网面板地址，输入用户名、密码进行登�
 
 2. 搭建LAMP环境
 
-登陆塔成功后，选择安装环境LAMP，急速安装，需要花很长时间（5小时左右），期间可以干点其他事，等待环境安装完成
+登陆塔成功后，选择安装环境LAMP，急速安装，需要花很长时间（5小时左右），自己安排时间，等待环境安装完成
 
 ![安装环境](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210318_003.png "在这里输入图片标题")
 
-安装完成（可以参考我安装所花的时间,算了下大概5.2个小时）    
+安装完成（可以参考我安装所花的时间，算了下大概5.2个小时，可以晚上安装睡一觉）    
 
 ![LAMP完成](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210318_004.png "在这里输入图片标题")
 
-如果一键部署出现如下错误信息，是因为Apache没有启动成功（armbian的openssl版本在官方源中只有1.1.0，但宝塔已经帮你装好了openssl）    
+*如果后面步骤的一键部署出现如下错误信息，是因为Apache没有启动成功（armbian的openssl版本在官方源中只有1.1.0，但宝塔已经帮你装好了openssl）*    
 
 >httpd: Syntax error on line 130 of /www/server/apache/conf/httpd.conf: Cannot load modules/mod_ssl.so into server: /usr/lib/aarch64-linux-gnu/libssl.so.1.1: version `OPENSSL_1_1_1′ not found (required by /www/server/apache/modules/mod_ssl.so)    
 
-确认Apache服务状态
+*确认Apache服务状态*
+
 ![查看Apache状态](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210318_006.png "在这里输入图片标题")
 
-所以执行以下命令把opnessl替换即可解决
+*所以执行以下命令把opnessl替换即可解决*
 ```
 mv /usr/bin/openssl /usr/bin/openssl—old
 ln -s /usr/local/openssl111/bin/openssl  /usr/bin/openssl
@@ -52,7 +53,7 @@ ln -s /usr/local/openssl111/lib/libssl.so.1.1 /usr/lib/aarch64-linux-gnu/libssl.
 mv /usr/lib/aarch64-linux-gnu/libcrypto.so.1.1 /usr/lib/aarch64-linux-gnu/libcrypto.so.1.1—old
 ln -s /usr/local/openssl111/lib/libcrypto.so.1.1 /usr/lib/aarch64-linux-gnu/libcrypto.so.1.1
 ```
-上面命令完成后，到宝塔面板重启Apache服务
+*上面命令完成后，到宝塔面板重启Apache服务*
 
 ![重启Apache](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210318_005.png "在这里输入图片标题")
 
