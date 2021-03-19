@@ -168,17 +168,17 @@ mmcblk1boot0 179:32   0     4M  1 disk
 mmcblk1boot1 179:64   0     4M  1 disk
 zram0        253:0    0    50M  0 disk /var/log
 zram1        253:1    0 919.2M  0 disk [SWAP]
-root@aml:/www/wwwroot/kodbox# chown -hR www ./NAS/
-root@aml:/www/wwwroot/kodbox# chgrp -hR www ./NAS/
+root@aml:/www/wwwroot/kodbox# chown -hR www NAS/
+root@aml:/www/wwwroot/kodbox# chgrp -hR www NAS/
 ```
 
 - 设置开机自动挂载硬盘
 
 输入命令`blkid /dev/sda`，查看硬盘的信息UUID和TYPE    
 再输入命令`nano /etc/fstab`，编辑/etc/fstab文件，最后一行加入如下信息：    
->UUID=d03d4044-b17f-42a0-8dd8-8071aa2ccc6a       /www/wwwroot/kodbox/NAS ext4    defaults        0 0
+>UUID=d03d4044-b17f-42a0-8dd8-8071aa2ccc6a       /www/wwwroot/kodbox/NAS ext4    defaults        0 0    
 Ctrl+O写入文件；Ctrl+O退出文件    
-以后当主机断电重启时，这块硬盘就在启动时自动挂载到/www/wwwroot/kodbox/NAS目录下
+以后当主机断电重启时，这块硬盘就在启动时自动挂载到/www/wwwroot/kodbox/NAS目录下     
 
 ```
 root@aml:/www/wwwroot/kodbox# blkid /dev/sda
