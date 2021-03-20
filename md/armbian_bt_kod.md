@@ -138,7 +138,7 @@ Writing superblocks and filesystem accounting information: done
 
 - 新建挂载目录
 
-输入命令`cd /www/wwwroor/数据库名/`（我设置的数据库位置`cd /www/wwwroor/kodbox/`），进入可道云的根目录下    
+输入命令`cd /www/wwwroor/数据库名/`（我设置的数据库位置是/www/wwwroor/kodbox/），进入可道云的根目录下    
 继续输入命令`ls`，查看目录内容，data目录为可道云数据库默认存储数据的位置    
 再输入命令`mkdir NAS`，新建一个目录，用于挂载硬盘（目录名随意，此处目录为NAS）  
 
@@ -152,7 +152,7 @@ root@aml:/www/wwwroot/kodbox# mkdir NAS
 - 挂载磁盘
 
 输入命令`mount /dev/sda NAS/`，挂载磁盘sda到/www/wwwroot/数据库名/NAS/下（此处为/www/wwwroot/kodbox/NAS/）    
-输入命令`lsblk`，查看硬盘挂载是否成功，sda的MOUNTPOINT挂载点是否显示/www/wwwroot/kodbox/NAS/
+输入命令`lsblk`，查看硬盘挂载是否成功，sda的MOUNTPOINT挂载点是否显示/www/wwwroot/kodbox/NAS/    
 输入命令`chown -hR www NAS/`，更改NAS目录的的所属用户为www    
 输入命令`chgrp -hR www NAS/`，更改NAS目录的的所属组为www    
 
@@ -177,6 +177,7 @@ root@aml:/www/wwwroot/kodbox# chgrp -hR www NAS/
 输入命令`blkid /dev/sda`，查看硬盘的信息UUID和TYPE    
 再输入命令`nano /etc/fstab`，编辑/etc/fstab文件，最后一行加入如下信息：    
 >UUID=d03d4044-b17f-42a0-8dd8-8071aa2ccc6a       /www/wwwroot/kodbox/NAS ext4    defaults        0 0    
+
 Ctrl+O写入文件；Ctrl+O退出文件    
 以后当主机断电重启时，这块硬盘就在启动时自动挂载到/www/wwwroot/kodbox/NAS目录下     
 
@@ -197,21 +198,100 @@ UUID=d03d4044-b17f-42a0-8dd8-8071aa2ccc6a       /www/wwwroot/kodbox/NAS ext4    
 
 4. web界面设置
 
-- 进入可道云web界面,点击左下角的图标弹出设置菜单,选择**后台管理**
-- 新界面点击**存储文件--->存储管理**
-- 在右侧界面点击**新增**进入新设置界面
+- 可道云web界面,进入后台管理
+
+![可道云后台管理](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210319_002.png "在这里输入图片标题")
+
+- 找到存储文件 ---> 存储管理 ---> 新增
+
+![存储管理](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210319_003.png "在这里输入图片标题")
+
 - 如下设置
-- 存储类型:**本地**(FTP应该也可以,没测试)
-- 名称:**随意命名**
-- 空间大小:**不要超过磁盘大小**
-- 存储目录:**点击右侧文件夹图标,选择之前新建的NAS文件夹**
-- 设置好之后保存,回到之前界面,就多了一个NAS的磁盘
-- 点击NAS磁盘上**文件管理**右侧的下拉三角,选择设为默认,跳出确认窗口选确定
 
-以上,基本的设置酒完成了.
+![新增设置](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210319_004.png "在这里输入图片标题")
+![新增默认](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210319_005.png "在这里输入图片标题")
 
-后面还有新建账户,权限,外网访问(需要公网IP或内网穿透),以后再慢慢研究
+5. 传输配置
+
+- 上传小文件(500MB以内,上传成功)
+
+![上传成功](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210319_006.png "在这里输入图片标题")
+![上传成功](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210319_007.png "在这里输入图片标题")
+
+- 上传大文件(500MB以上,上传失败)
+
+![上传失败](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210319_008.png "在这里输入图片标题")
+
+*测试文件大小1.4GB,上传失败并给出解决方法*    
+
+**方法1：**    
+按照提示找到php.ini和php-fpm.conf文件并修改相关内容（两个文件在此目录下/www/server/php/56/etc/）    
+
+```
+root@aml:# ls /www/server/php/56/etc/
+pear.conf  php-fpm.conf  php-fpm.conf.default  php.ini
+root@aml:# nano /www/server/php/56/etc/php.ini
+#Ctrl+W查找相关内容并修改如下（仅供参考）
+...
+post_max_size = 500M
+...
+upload_max_filesize = 5000M
+...
+memory_limit = 500M
+...
+max_execution_time = 3600
+...
+max_input_time = 3600
+...
+#Ctrl+O写入文件，Ctrl+X退出
+root@aml:# nano /www/server/php/56/etc/php-fpm.conf
+#同样Ctrl+W查找相关内容并修改如下（仅供参考）
+...
+request_terminate_timeout = 3600
+...
+#同样Ctrl+O写入文件，Ctrl+X退出
+#再重新加载php修改过的配置
+root@aml:~# /etc/init.d/php-fpm-56 reload
+```
+
+**方法2：**    
+
+浏览器进入宝塔面板，找到php服务修改配置，并保存
+
+![设置php.ini](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210319_009.png "在这里输入图片标题")
+![设置php-fpm.conf](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210319_010.png "在这里输入图片标题")
+
+上述修改保存后，再重载配置
+
+![设置php-fpm.conf](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210319_011.png "在这里输入图片标题")
+
+分片上传和分片大小设置
+
+![分片上传设置](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210319_012.png "在这里输入图片标题")
+
+- 再次传输大容量文件
+
+![再次上传大文件](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210320_001.png "在这里输入图片标题")
+
+且可以在线播放媒体文件    
+
+![再次上传大文件](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210320_002.png "在这里输入图片标题")
+![再次上传大文件](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210320_003.png "在这里输入图片标题")
+
+- 手机端登陆
+
+你的手机和kodbox服务器主机在同一个局域网内，站点切换为上面搭建的kodbok服务器的ip地址站点，即可登陆    
+然后就可以上传、下载之类的操作了。    
+
+![登陆](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210320_004.png "在这里输入图片标题")
+![登陆](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210320_005.png "在这里输入图片标题")
+![登陆](https://gitee.com/ryuukarin/shell_scripts/raw/master/img/210320_006.png "在这里输入图片标题")
 
 
+以上，基本的设置就完成了。
 
+后面还有新建账户，权限，外网访问(需要公网IP或内网穿透)，以后再慢慢研究。    
 
+---
+
+**折腾到此结束！**
